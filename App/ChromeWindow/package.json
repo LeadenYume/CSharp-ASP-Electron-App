@@ -1,0 +1,20 @@
+{
+  "name": "ElectronTestApp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "icon": "icon.png",
+  "scripts": {
+    "start": "electron . ",
+    "buildWin": "electron-packager . App --overwrite --icon=icon.ico --ignore=node_modules/electron*",
+    "buildUbuntu": "electron-packager . App --overwrite --asar --platform=linux --arch=x64 --ignore=node_modules/electron*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electro": "^2.1.1",
+    "electron": "^11.2.1",
+    "electron-packager": "^15.2.0"
+  }
+}

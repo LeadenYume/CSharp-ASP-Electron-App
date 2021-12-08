@@ -1,0 +1,39 @@
+﻿
+.drag-area {
+	background: var(--color-background1);
+	-webkit-app-region: drag;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.no-drag-area {
+	-webkit-app-region: no-drag;
+	display: flex;
+	flex-direction: row;
+}
+
+.app-head-icon-wrapper {
+	margin: auto 10px;
+}
+
+.app-head-icon-wrapper svg {
+	height: 14px;
+	width: 14px;
+}
+
+.app-logo{
+	padding: 8px;
+}
+
+.app-head-button {
+	background-color: var(--color-background1); /* Green */
+	border: none;
+	color: white;
+	padding: 4px 8px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+

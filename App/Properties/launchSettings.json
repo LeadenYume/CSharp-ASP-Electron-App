@@ -1,0 +1,44 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/App",
+      "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "http://localhost:50165",
+      "sslPort": 44356
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "OPEN_ELECTRON_WINDOW": "false",
+        "OPEN_IIS_WINDOW": "true"
+      }
+    },
+    "ElectronWindow": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "OPEN_ELECTRON_WINDOW": "true",
+        "OPEN_IIS_WINDOW": "false"
+      }
+    },
+    "SingleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "startURL=http://localhost:8002",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "OPEN_ELECTRON_WINDOW": "false",
+        "OPEN_IIS_WINDOW": "false"
+      }
+    }
+  }
+}

@@ -1,0 +1,112 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
+    <RuntimeIdentifiers> win10-x64; ubuntu.16.04-x64 </RuntimeIdentifiers>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <IsPackable>false</IsPackable>
+    <SpaRoot>WebApp</SpaRoot>
+    <ElectronRoot>ChromeWindow</ElectronRoot>
+    <ElectronBuildFolderName>chromeWindow-win32-x64</ElectronBuildFolderName>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)\node_modules\**</DefaultItemExcludes>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+    <OutputType>Exe</OutputType>
+    <M>"</M>
+    <Configurations>Debug;DebugWin;ReleaseWin;Release</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup> 
+    <PackageReference Include="CstsHelpers" Version="1.0.0" /> 
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.3" /> 
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+  
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ElectronStartup\ElectronStartup.csproj" />
+  </ItemGroup>
+ 
+  <Target Name="test" BeforeTargets="Build">
+    <Message Importance="high" Text="Configuration = $(Configuration)" />
+    <!--
+    <Message Importance="high" Text="Restoring dependencies using 'npm'." />
+    <Exec WorkingDirectory="$(SpaRoot)\" Command="npm install" />
+    -->
+  </Target>
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)\node_modules') ">
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
+    <Exec WorkingDirectory="$(SpaRoot)\" Command="npm install" />
+  </Target>
+
+
+  <!--Build React and Move to out -->
+  <Target Name="BuildReleaseReact" BeforeTargets="Build" Condition=" ('$(Configuration)' == 'ReleaseWin') Or ('$(Configuration)' == 'ReleaseLinux') ">
+
+    <Message Importance="high" Text="Remove build folder in outdir" />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="RD /S /Q $(ProjectDir)$(OutDir)\$(SpaRoot) " />
+    
+    <Message Importance="high" Text="Start build react using npm." />
+    <Exec WorkingDirectory="$(SpaRoot)\" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)\" Command="npm run build" />
+    
+    <Message Importance="high" Text="Start copy react build to $(ProjectDir)$(OutDir)\$(SpaRoot)\build\ ." />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="xcopy $(ProjectDir)\WebApp\build  $(ProjectDir)$(OutDir)\$(SpaRoot)\build\ /H /Y /C /E " />
+  </Target>
+
+  <!--Build Electron Win -->
+  <Target Name="BuildElectronWin" AfterTargets="BuildReleaseReact" Condition="'$(Configuration)'=='ReleaseWin' Or '$(Configuration)'=='DebugWin' ">
+    <Message Importance="high" Text="Build electron windows..." />
+    <Message Importance="high" Text="Start build electron using npm." />
+    <Exec WorkingDirectory="$(ProjectDir)" Condition="Exists('$(ElectronRoot)\node_modules')" Command="RD /S /Q $(ElectronRoot)\node_modules" />
+    <Exec WorkingDirectory="$(ElectronRoot)\" Command="npm install" />
+    <Exec WorkingDirectory="$(ElectronRoot)\" Command="npm run buildWin" />
+  </Target>
+
+
+  <Target Name="BuildReleaseElectronWin" AfterTargets="BuildElectronWin" Condition="'$(Configuration)'=='ReleaseWin' ">
+    <Message Importance="high" Text="Build release windows..." />
+    <Exec WorkingDirectory="$(ProjectDir)" Condition="Exists('$(ProjectDir)\bin\win')" Command="RD /S /Q $(ProjectDir)\bin\win" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" ConsoleToMsBuild="true" Command="dir $(ProjectDir)\ChromeWindow\*win32-x64 /B">
+      <Output TaskParameter="ConsoleOutput" PropertyName="ElectroBuildFolderName" />
+    </Exec>
+    <Message Importance="high" Text="Electron build folder: $(ElectroBuildFolderName)" />
+
+    <Exec WorkingDirectory="$(ProjectDir)" Command="xcopy $(ProjectDir)\ChromeWindow\$(ElectroBuildFolderName) $(ProjectDir)\bin\win\ /H /Y /C /E " />
+
+    <!--Create manifest-->
+    <Exec WorkingDirectory="$(ProjectDir)" Command="echo {$(M)AspBinName$(M): $(M)$(TargetName)$(M)} &gt; $(ProjectDir)\bin\win\resources\app\Yu\initSettings.json  " />
+    
+    <Exec WorkingDirectory="$(ProjectDir)" Command="xcopy $(ProjectDir)$(OutDir)  $(ProjectDir)\bin\win\resources\app\Yu\aspbin\ /H /Y /C /E " />
+    
+    <Exec WorkingDirectory="$(ProjectDir)" Command="xcopy $(ProjectDir)\bin\win\resources\app\Yu\aspbin\WebApp  $(ProjectDir)\bin\win\WebApp\ /H /Y /C /E " />
+    
+    <!--Clear-->
+    <Exec WorkingDirectory="$(ProjectDir)" Condition="Exists('$(ProjectDir)\bin\win\resources\app\Yu\aspbin\WebApp')" Command="RD /S /Q $(ProjectDir)\bin\win\resources\app\Yu\aspbin\WebApp " />
+    
+    <Exec WorkingDirectory="$(ProjectDir)" Condition="Exists('$(ProjectDir)\bin\win\resources\app\Yu\aspbin\ChromeWindow')" Command="RD /S /Q $(ProjectDir)\bin\win\resources\app\Yu\aspbin\ChromeWindow " />
+  </Target>
+
+
+  <ProjectExtensions><VisualStudio><UserProperties webapp_4package_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+    <TypeScriptModuleKind>AMD</TypeScriptModuleKind>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
+</Project>

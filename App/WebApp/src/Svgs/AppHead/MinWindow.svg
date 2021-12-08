@@ -1,0 +1,14 @@
+<svg id="Слой_1" data-name="Слой 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236.77 236.77">
+  <defs>
+    <style>
+      .mi-wi {
+      stroke: var(--color-text-default);
+      stroke-miterlimit: 10;
+      stroke-width: 20px;
+      fill: none;
+      }
+    </style>
+  </defs>
+  <rect class="mi-wi" x="5" y="75.87" width="170.08" height="155.91"/>
+  <polyline class="mi-wi" points="61.69 75.87 61.69 5 231.77 5 231.77 160.91 175.08 160.91"/>
+</svg>

@@ -1,0 +1,12 @@
+**/node_modules/
+lib/
+lib-commonjs/
+dist/
+css/
+coverage/
+.vscode/
+.vs/
+.DS_Store
+bin/
+obj/
+**win32-x64/
